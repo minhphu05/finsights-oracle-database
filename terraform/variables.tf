@@ -134,7 +134,7 @@ variable "account2_private_subnet_cidr" {
 variable "allowed_ingress_cidrs" {
   description = "List of client CIDRs allowed to connect to database ports (e.g. Finsights VPS nodes)"
   type        = list(string)
-  default     = [
+  default = [
     "103.249.117.232/32", # VPS Node 1 (Control Plane)
     "103.249.117.201/32"  # VPS Node 2 (Worker + DB)
   ]
