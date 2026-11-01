@@ -64,7 +64,7 @@ jobs:
         run: terraform fmt -check -recursive
 
       - name: Restore Terraform State
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: terraform/terraform.tfstate
           key: tfstate-${{ github.run_id }}
@@ -91,6 +91,13 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.tf_action == 'destroy'
         run: |
           terraform destroy -auto-approve -input=false
+
+      - name: Save Terraform State Cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: terraform/terraform.tfstate
+          key: tfstate-${{ github.run_id }}
 
       - name: Backup Terraform State Artifact
         if: always()

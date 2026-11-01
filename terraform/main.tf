@@ -31,17 +31,16 @@ module "account1_autonomous_database" {
   source    = "./modules/autonomous_database"
   providers = { oci = oci.account1 }
 
-  compartment_id  = var.account1_compartment_id
-  db_name         = "${var.adb_name}1"
-  display_name    = "${var.adb_display_name}-tokyo"
-  admin_password  = var.adb_admin_password
-  db_version      = var.adb_version
-  db_workload     = var.adb_workload
-  is_free_tier    = true
-  compute_model   = "ECPU"
-  compute_count   = 2
-  whitelisted_ips = var.allowed_ingress_cidrs
-  tags            = local.common_tags
+  compartment_id = var.account1_compartment_id
+  db_name        = "${var.adb_name}1"
+  display_name   = "${var.adb_display_name}-tokyo"
+  admin_password = var.adb_admin_password
+  db_version     = var.adb_version
+  db_workload    = var.adb_workload
+  is_free_tier   = true
+  compute_model  = "ECPU"
+  compute_count  = 2
+  tags           = local.common_tags
 }
 
 # Object Storage Bucket (Always Free 10 GB) in Tokyo
@@ -100,17 +99,16 @@ module "account2_autonomous_database" {
   source    = "./modules/autonomous_database"
   providers = { oci = oci.account2 }
 
-  compartment_id  = var.account2_compartment_id != "" ? var.account2_compartment_id : var.account1_compartment_id
-  db_name         = "${var.adb_name}2"
-  display_name    = "${var.adb_display_name}-singapore"
-  admin_password  = var.adb_admin_password
-  db_version      = var.adb_version
-  db_workload     = var.adb_workload
-  is_free_tier    = true
-  compute_model   = "ECPU"
-  compute_count   = 2
-  whitelisted_ips = var.allowed_ingress_cidrs
-  tags            = local.common_tags
+  compartment_id = var.account2_compartment_id != "" ? var.account2_compartment_id : var.account1_compartment_id
+  db_name        = "${var.adb_name}2"
+  display_name   = "${var.adb_display_name}-singapore"
+  admin_password = var.adb_admin_password
+  db_version     = var.adb_version
+  db_workload    = var.adb_workload
+  is_free_tier   = true
+  compute_model  = "ECPU"
+  compute_count  = 2
+  tags           = local.common_tags
 }
 
 # Object Storage Bucket (Always Free 10 GB) in Singapore

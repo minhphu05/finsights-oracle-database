@@ -17,13 +17,11 @@ resource "oci_database_autonomous_database" "this" {
   is_free_tier                        = var.is_free_tier
   compute_model                       = var.compute_model
   compute_count                       = var.compute_count
-  data_storage_size_in_tbs            = 1
+  data_storage_size_in_tbs            = var.is_free_tier ? null : 1
   is_auto_scaling_enabled             = false
   is_auto_scaling_for_storage_enabled = false
   license_model                       = "LICENSE_INCLUDED"
-  whitelisted_ips                     = length(var.whitelisted_ips) > 0 ? var.whitelisted_ips : null
   subnet_id                           = var.subnet_id
-  is_access_control_enabled           = length(var.whitelisted_ips) > 0 ? true : false
   is_mtls_connection_required         = true
   freeform_tags                       = var.tags
 

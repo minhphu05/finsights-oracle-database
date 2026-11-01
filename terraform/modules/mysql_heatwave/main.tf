@@ -33,9 +33,13 @@ resource "oci_mysql_mysql_db_system" "this" {
   port                    = 3306
   port_x                  = 33060
 
-  backup_policy {
-    is_enabled        = true
-    retention_in_days = 7
+  # Backup policy is only supported for paid shapes, not allowed during CreateDbSystem for MySQL.Free
+  dynamic "backup_policy" {
+    for_each = var.shape_name != "MySQL.Free" ? [1] : []
+    content {
+      is_enabled        = true
+      retention_in_days = 7
+    }
   }
 
   freeform_tags = var.tags
