@@ -1,0 +1,39 @@
+# Compiled files and local caches
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfplan
+*.plan
+
+# Terraform directory
+.terraform/
+.terraform.lock.hcl
+
+# Secret files, keys, and credentials
+*.pem
+*.key
+*.pub
+.oci/
+credentials/
+*.env
+*.env.*
+!*.env.example
+draft.txt
+*password*
+*secret*
+terraform.tfvars
+*.auto.tfvars
+
+# Wallet archives and certificates
+*wallet*.zip
+*Wallet*.zip
+*.sso
+*.jks
+tnsnames.ora
+sqlnet.ora
+cwallet.sso
+
+# OS artifacts
+.DS_Store
+*.log

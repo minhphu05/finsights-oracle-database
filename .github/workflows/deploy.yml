@@ -1,0 +1,84 @@
+name: Deploy Finsights Oracle Database Resources
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+    inputs:
+      tf_action:
+        description: 'Terraform action to execute'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  terraform:
+    name: Provision OCI Databases & Storage (Dual-Account)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    env:
+      # Account 1 (Tokyo - Primary)
+      TF_VAR_account1_tenancy_ocid: ${{ secrets.OCI_ACCOUNT1_TENANCY_OCID }}
+      TF_VAR_account1_user_ocid: ${{ secrets.OCI_ACCOUNT1_USER_OCID }}
+      TF_VAR_account1_fingerprint: ${{ secrets.OCI_ACCOUNT1_FINGERPRINT }}
+      TF_VAR_account1_region: ${{ secrets.OCI_ACCOUNT1_REGION || 'ap-tokyo-1' }}
+      TF_VAR_account1_compartment_id: ${{ secrets.OCI_ACCOUNT1_COMPARTMENT_OCID || secrets.OCI_ACCOUNT1_TENANCY_OCID }}
+      TF_VAR_account1_private_key_content: ${{ secrets.OCI_ACCOUNT1_KEY_CONTENT }}
+
+      # Account 2 (Singapore - Secondary)
+      TF_VAR_enable_account2: ${{ secrets.OCI_ACCOUNT2_TENANCY_OCID != '' }}
+      TF_VAR_account2_tenancy_ocid: ${{ secrets.OCI_ACCOUNT2_TENANCY_OCID }}
+      TF_VAR_account2_user_ocid: ${{ secrets.OCI_ACCOUNT2_USER_OCID }}
+      TF_VAR_account2_fingerprint: ${{ secrets.OCI_ACCOUNT2_FINGERPRINT }}
+      TF_VAR_account2_region: ${{ secrets.OCI_ACCOUNT2_REGION || 'ap-singapore-1' }}
+      TF_VAR_account2_compartment_id: ${{ secrets.OCI_ACCOUNT2_COMPARTMENT_OCID || secrets.OCI_ACCOUNT2_TENANCY_OCID }}
+      TF_VAR_account2_private_key_content: ${{ secrets.OCI_ACCOUNT2_KEY_CONTENT }}
+
+      # Database Passwords
+      TF_VAR_adb_admin_password: ${{ secrets.ADB_ADMIN_PASSWORD }}
+      TF_VAR_mysql_admin_password: ${{ secrets.MYSQL_ADMIN_PASSWORD }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.8.5'
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -out=tfplan -input=false
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.tf_action == 'apply')
+        run: |
+          terraform apply -input=false tfplan
+
+      - name: Terraform Destroy
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.tf_action == 'destroy'
+        run: |
+          terraform destroy -auto-approve -input=false

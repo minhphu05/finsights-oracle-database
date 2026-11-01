@@ -1,0 +1,84 @@
+# ==============================================================================
+# Finsights Oracle Database Dual-Account Configuration (Mirrored Full Stack)
+# Copy this file to terraform.tfvars and fill in your values
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Account 1: Tokyo (NRT) - Full Stack (ADB 23ai Vector, Object Storage, MySQL)
+# Email: nguyenhoquynhnhi01091997@gmail.com
+# ------------------------------------------------------------------------------
+account1_tenancy_ocid        = "ocid1.tenancy.oc1..aaaaaaaar32kmxzfzptdugysbbvtijs7avyjnlg42hqec6qs2j45h7e6hatq"
+account1_user_ocid           = "ocid1.user.oc1..aaaaaaaaojtx3lxugijvmm7hkkss4djkbtelqmgspyww2qjldlb3nmissmna"
+account1_fingerprint         = "e6:8d:ac:81:e4:98:84:c5:57:9f:3f:41:a7:87:1d:73"
+account1_region              = "ap-tokyo-1"
+account1_compartment_id      = "ocid1.tenancy.oc1..aaaaaaaar32kmxzfzptdugysbbvtijs7avyjnlg42hqec6qs2j45h7e6hatq"
+account1_availability_domain = "hItB:AP-TOKYO-1-AD-1"
+account1_private_key_path    = ".oci/account1.pem"
+
+account1_vcn_cidr            = "10.100.0.0/16"
+account1_private_subnet_cidr = "10.100.1.0/24"
+
+# ------------------------------------------------------------------------------
+# Account 2: Singapore (SIN) - Full Stack (ADB 23ai Vector, Object Storage, MySQL)
+# Email: phandinphhuc090870@gmail.com
+# ------------------------------------------------------------------------------
+enable_account2              = true
+account2_tenancy_ocid        = "ocid1.tenancy.oc1..aaaaaaaaxq3a5klqzg7kjeuifjw7bgriopgmgemvoxtqfmljd5wwyae6orgq"
+account2_user_ocid           = "ocid1.user.oc1..aaaaaaaafb54gznd6ofrbck7mbfhucugi2iu2b5txciom5lil6fsnmlzsq3q"
+account2_fingerprint         = "c9:f9:a6:1b:49:8b:e5:d2:0f:f7:1d:bc:11:6b:f7:5f"
+account2_region              = "ap-singapore-1"
+account2_compartment_id      = "ocid1.tenancy.oc1..aaaaaaaaxq3a5klqzg7kjeuifjw7bgriopgmgemvoxtqfmljd5wwyae6orgq"
+account2_availability_domain = "AdSE:AP-SINGAPORE-1-AD-1"
+account2_private_key_path    = ".oci/account2.pem"
+
+account2_vcn_cidr            = "10.200.0.0/16"
+account2_private_subnet_cidr = "10.200.1.0/24"
+
+# ------------------------------------------------------------------------------
+# Client Network Access (Finsights VPS Nodes)
+# ------------------------------------------------------------------------------
+allowed_ingress_cidrs = [
+  "103.249.117.232/32", # VPS Node 1 (Control Plane)
+  "103.249.117.201/32"  # VPS Node 2 (Worker + DB)
+]
+
+# ------------------------------------------------------------------------------
+# Autonomous Database (Oracle 23ai Always Free Vector DB - Both Accounts)
+# ------------------------------------------------------------------------------
+enable_autonomous_database = true
+adb_name                   = "finsightsvec"
+adb_display_name           = "finsights-adb-23ai-vector"
+adb_version                = "23ai"
+adb_workload               = "OLTP"
+# Strong password: 12-30 characters, uppercase, lowercase, numbers, and allowed symbols
+adb_admin_password         = "Finsights2026#SecureADB"
+
+# ------------------------------------------------------------------------------
+# Object Storage (10 GB Always Free in Both Tokyo and Singapore)
+# ------------------------------------------------------------------------------
+enable_object_storage = true
+bucket_name           = "finsights-data-assets"
+bucket_access_type    = "NoPublicAccess"
+
+# ------------------------------------------------------------------------------
+# MySQL Database System & HeatWave (Both Accounts)
+# ------------------------------------------------------------------------------
+enable_mysql                  = true
+mysql_display_name            = "finsights-mysql-db"
+mysql_shape_name              = "MySQL.VM.Standard.E3.1.8GB"
+mysql_admin_username          = "finsightsadmin"
+# Strong password: minimum 8 characters, uppercase, lowercase, numbers, special characters
+mysql_admin_password          = "Finsights2026#MySQL"
+mysql_data_storage_size_in_gb = 50
+
+# Set to true if your tenancy has HeatWave cluster quota / trial enabled
+enable_heatwave       = false
+heatwave_cluster_size = 1
+heatwave_shape_name   = "HeatWave.VM.Standard.E3"
+
+# Common Tags
+additional_tags = {
+  Project     = "Finsights"
+  Environment = "production"
+  Owner       = "kittnguyen"
+}
