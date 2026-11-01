@@ -150,3 +150,69 @@ resource "oci_core_subnet" "private" {
   security_list_ids          = [oci_core_security_list.private.id]
   freeform_tags              = var.tags
 }
+
+# 6. Internet Gateway (for Public Subnet & Network Load Balancer)
+resource "oci_core_internet_gateway" "this" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.this.id
+  display_name   = "${var.name_prefix}-igw"
+  enabled        = true
+  freeform_tags  = var.tags
+}
+
+# 7. Public Route Table
+resource "oci_core_route_table" "public" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.this.id
+  display_name   = "${var.name_prefix}-public-rt"
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.this.id
+    description       = "Default internet route through Internet Gateway"
+  }
+
+  freeform_tags = var.tags
+}
+
+# 8. Security List for Public Subnet (Network Load Balancer)
+resource "oci_core_security_list" "public" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.this.id
+  display_name   = "${var.name_prefix}-public-sl"
+
+  # Ingress MySQL port 3306 from anywhere (protected by MySQL authentication)
+  ingress_security_rules {
+    protocol    = "6" # TCP
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    description = "MySQL access via Network Load Balancer"
+    tcp_options {
+      min = 3306
+      max = 3306
+    }
+  }
+
+  # Allow all outbound
+  egress_security_rules {
+    protocol    = "all"
+    destination = "0.0.0.0/0"
+    description = "Allow all outbound traffic"
+  }
+
+  freeform_tags = var.tags
+}
+
+# 9. Public Subnet (Hosts Network Load Balancer)
+resource "oci_core_subnet" "public" {
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.this.id
+  display_name               = "${var.name_prefix}-public-subnet"
+  cidr_block                 = var.public_subnet_cidr
+  dns_label                  = "fspubsub"
+  prohibit_public_ip_on_vnic = false
+  route_table_id             = oci_core_route_table.public.id
+  security_list_ids          = [oci_core_security_list.public.id]
+  freeform_tags              = var.tags
+}

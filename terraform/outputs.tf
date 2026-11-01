@@ -62,6 +62,11 @@ output "account1_mysql_heatwave_status" {
   value       = var.enable_mysql ? module.account1_mysql_heatwave[0].heatwave_cluster_status : null
 }
 
+output "account1_mysql_public_ip" {
+  description = "Public IP of Network Load Balancer forwarding to MySQL in Account 1 (Tokyo) for DBeaver/external clients"
+  value       = var.enable_mysql && var.enable_mysql_nlb ? module.account1_mysql_nlb[0].public_ip : null
+}
+
 # ==============================================================================
 # Account 2: Singapore Outputs (Full Stack)
 # ==============================================================================
@@ -124,4 +129,9 @@ output "account2_mysql_port" {
 output "account2_mysql_heatwave_status" {
   description = "Status of MySQL HeatWave cluster in Account 2 (Singapore)"
   value       = var.enable_account2 && var.enable_mysql ? module.account2_mysql_heatwave[0].heatwave_cluster_status : null
+}
+
+output "account2_mysql_public_ip" {
+  description = "Public IP of Network Load Balancer forwarding to MySQL in Account 2 (Singapore) for DBeaver/external clients"
+  value       = var.enable_account2 && var.enable_mysql && var.enable_mysql_nlb ? module.account2_mysql_nlb[0].public_ip : null
 }

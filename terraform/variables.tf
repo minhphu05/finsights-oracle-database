@@ -58,6 +58,12 @@ variable "account1_private_subnet_cidr" {
   default     = "10.100.1.0/24"
 }
 
+variable "account1_public_subnet_cidr" {
+  description = "Public Subnet CIDR block for Account 1 (Tokyo) used by Network Load Balancer"
+  type        = string
+  default     = "10.100.0.0/24"
+}
+
 # ==============================================================================
 # Account 2 Authentication (Singapore)
 # ==============================================================================
@@ -126,6 +132,18 @@ variable "account2_private_subnet_cidr" {
   description = "Private Subnet CIDR block for Account 2 (Singapore)"
   type        = string
   default     = "10.200.1.0/24"
+}
+
+variable "account2_public_subnet_cidr" {
+  description = "Public Subnet CIDR block for Account 2 (Singapore) used by Network Load Balancer"
+  type        = string
+  default     = "10.200.0.0/24"
+}
+
+variable "enable_mysql_nlb" {
+  description = "Provision public Network Load Balancer (Always Free) to expose MySQL port 3306 for external clients (DBeaver, VPS nodes)"
+  type        = bool
+  default     = true
 }
 
 # ==============================================================================

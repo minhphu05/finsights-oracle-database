@@ -12,3 +12,8 @@ output "security_list_id" {
   description = "OCID of the private security list"
   value       = oci_core_security_list.private.id
 }
+
+output "public_subnet_id" {
+  description = "OCID of the public subnet"
+  value       = oci_core_subnet.public.id
+}

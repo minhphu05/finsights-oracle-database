@@ -21,6 +21,12 @@ variable "private_subnet_cidr" {
   default     = "10.100.1.0/24"
 }
 
+variable "public_subnet_cidr" {
+  description = "CIDR block for the public subnet (used by Network Load Balancer)"
+  type        = string
+  default     = "10.100.0.0/24"
+}
+
 variable "allowed_ingress_cidrs" {
   description = "List of external CIDRs allowed to connect to database ports (e.g. VPS nodes or VPN)"
   type        = list(string)

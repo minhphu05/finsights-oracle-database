@@ -21,6 +21,7 @@ module "account1_network" {
   name_prefix           = "${local.name_prefix}-tokyo"
   vcn_cidr              = var.account1_vcn_cidr
   private_subnet_cidr   = var.account1_private_subnet_cidr
+  public_subnet_cidr    = var.account1_public_subnet_cidr
   allowed_ingress_cidrs = var.allowed_ingress_cidrs
   tags                  = local.common_tags
 }
@@ -43,7 +44,7 @@ module "account1_autonomous_database" {
   tags           = local.common_tags
 }
 
-# Object Storage Bucket (Always Free 10 GB) in Tokyo
+# Object Storage Bucket (Always Free 20 GB) in Tokyo
 module "account1_object_storage" {
   count     = var.enable_object_storage ? 1 : 0
   source    = "./modules/object_storage"
@@ -77,6 +78,19 @@ module "account1_mysql_heatwave" {
   tags                    = local.common_tags
 }
 
+# Public Network Load Balancer (Always Free) for MySQL in Tokyo
+module "account1_mysql_nlb" {
+  count     = var.enable_mysql && var.enable_mysql_nlb ? 1 : 0
+  source    = "./modules/network_load_balancer"
+  providers = { oci = oci.account1 }
+
+  compartment_id    = var.account1_compartment_id
+  display_name      = "${local.name_prefix}-tokyo-mysql-nlb"
+  subnet_id         = module.account1_network.public_subnet_id
+  target_private_ip = module.account1_mysql_heatwave[0].ip_address
+  tags              = local.common_tags
+}
+
 # ==============================================================================
 # Account 2: Singapore (SIN) - Full Stack (ADB 23ai Vector, Object Storage, MySQL)
 # ==============================================================================
@@ -89,6 +103,7 @@ module "account2_network" {
   name_prefix           = "${local.name_prefix}-singapore"
   vcn_cidr              = var.account2_vcn_cidr
   private_subnet_cidr   = var.account2_private_subnet_cidr
+  public_subnet_cidr    = var.account2_public_subnet_cidr
   allowed_ingress_cidrs = var.allowed_ingress_cidrs
   tags                  = local.common_tags
 }
@@ -111,7 +126,7 @@ module "account2_autonomous_database" {
   tags           = local.common_tags
 }
 
-# Object Storage Bucket (Always Free 10 GB) in Singapore
+# Object Storage Bucket (Always Free 20 GB) in Singapore
 module "account2_object_storage" {
   count     = var.enable_account2 && var.enable_object_storage ? 1 : 0
   source    = "./modules/object_storage"
@@ -143,4 +158,17 @@ module "account2_mysql_heatwave" {
   heatwave_cluster_size   = var.heatwave_cluster_size
   heatwave_shape_name     = var.heatwave_shape_name
   tags                    = local.common_tags
+}
+
+# Public Network Load Balancer (Always Free) for MySQL in Singapore
+module "account2_mysql_nlb" {
+  count     = var.enable_account2 && var.enable_mysql && var.enable_mysql_nlb ? 1 : 0
+  source    = "./modules/network_load_balancer"
+  providers = { oci = oci.account2 }
+
+  compartment_id    = var.account2_compartment_id != "" ? var.account2_compartment_id : var.account1_compartment_id
+  display_name      = "${local.name_prefix}-singapore-mysql-nlb"
+  subnet_id         = module.account2_network[0].public_subnet_id
+  target_private_ip = module.account2_mysql_heatwave[0].ip_address
+  tags              = local.common_tags
 }
