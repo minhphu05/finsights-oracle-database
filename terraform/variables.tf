@@ -216,9 +216,9 @@ variable "mysql_display_name" {
 }
 
 variable "mysql_shape_name" {
-  description = "Compute shape for MySQL DB System (e.g. MySQL.VM.Standard.E3.1.8GB or MySQL.Free if supported)"
+  description = "Compute shape for MySQL DB System (e.g. MySQL.Free or MySQL.2 / MySQL.4 ECPU shapes)"
   type        = string
-  default     = "MySQL.VM.Standard.E3.1.8GB"
+  default     = "MySQL.Free"
 }
 
 variable "mysql_admin_username" {
@@ -252,9 +252,9 @@ variable "heatwave_cluster_size" {
 }
 
 variable "heatwave_shape_name" {
-  description = "Compute shape for HeatWave cluster nodes (e.g. HeatWave.Free or HeatWave.VM.Standard.E3)"
+  description = "Compute shape for HeatWave cluster nodes (e.g. HeatWave.Free or HeatWave.32GB)"
   type        = string
-  default     = "HeatWave.VM.Standard.E3"
+  default     = "HeatWave.Free"
 }
 
 # ==============================================================================

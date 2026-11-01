@@ -63,6 +63,14 @@ jobs:
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
+      - name: Restore Terraform State
+        uses: actions/cache@v4
+        with:
+          path: terraform/terraform.tfstate
+          key: tfstate-${{ github.run_id }}
+          restore-keys: |
+            tfstate-
+
       - name: Terraform Init
         run: terraform init
 
@@ -83,3 +91,12 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.tf_action == 'destroy'
         run: |
           terraform destroy -auto-approve -input=false
+
+      - name: Backup Terraform State Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state-backup
+          path: terraform/terraform.tfstate
+          if-no-files-found: ignore
+          retention-days: 90

@@ -12,12 +12,19 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
 }
 
+# Fetch default configurations for the selected MySQL shape (e.g. MySQL.Free or ECPU shape)
+data "oci_mysql_mysql_configurations" "this" {
+  compartment_id = var.compartment_id
+  shape_name     = var.shape_name
+}
+
 # 1. MySQL Database System
 resource "oci_mysql_mysql_db_system" "this" {
   compartment_id          = var.compartment_id
   availability_domain     = var.availability_domain != "" ? var.availability_domain : data.oci_identity_availability_domains.ads.availability_domains[0].name
   display_name            = var.display_name
   shape_name              = var.shape_name
+  configuration_id        = length(data.oci_mysql_mysql_configurations.this.configurations) > 0 ? data.oci_mysql_mysql_configurations.this.configurations[0].id : null
   subnet_id               = var.subnet_id
   admin_username          = var.admin_username
   admin_password          = var.admin_password
