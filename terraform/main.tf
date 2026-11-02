@@ -91,6 +91,19 @@ module "account1_mysql_nlb" {
   tags              = local.common_tags
 }
 
+# Monitoring & Alerting for Account 1 (Tokyo)
+module "account1_monitoring" {
+  count     = var.enable_monitoring ? 1 : 0
+  source    = "./modules/monitoring"
+  providers = { oci = oci.account1 }
+
+  compartment_id = var.account1_compartment_id
+  name_prefix    = "${local.name_prefix}-tokyo"
+  adb_id         = var.enable_autonomous_database ? module.account1_autonomous_database[0].id : ""
+  mysql_id       = var.enable_mysql ? module.account1_mysql_heatwave[0].id : ""
+  tags           = local.common_tags
+}
+
 # ==============================================================================
 # Account 2: Singapore (SIN) - Full Stack (ADB 23ai Vector, Object Storage, MySQL)
 # ==============================================================================
@@ -172,3 +185,17 @@ module "account2_mysql_nlb" {
   target_private_ip = module.account2_mysql_heatwave[0].ip_address
   tags              = local.common_tags
 }
+
+# Monitoring & Alerting for Account 2 (Singapore)
+module "account2_monitoring" {
+  count     = var.enable_account2 && var.enable_monitoring ? 1 : 0
+  source    = "./modules/monitoring"
+  providers = { oci = oci.account2 }
+
+  compartment_id = var.account2_compartment_id != "" ? var.account2_compartment_id : var.account1_compartment_id
+  name_prefix    = "${local.name_prefix}-singapore"
+  adb_id         = var.enable_autonomous_database ? module.account2_autonomous_database[0].id : ""
+  mysql_id       = var.enable_mysql ? module.account2_mysql_heatwave[0].id : ""
+  tags           = local.common_tags
+}
+

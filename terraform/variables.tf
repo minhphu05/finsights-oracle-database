@@ -276,6 +276,15 @@ variable "heatwave_shape_name" {
 }
 
 # ==============================================================================
+# Oracle Monitoring & Alerting Settings
+# ==============================================================================
+variable "enable_monitoring" {
+  description = "Enable OCI Monitoring, Alarms, and Management Agent for VPS metrics"
+  type        = bool
+  default     = true
+}
+
+# ==============================================================================
 # Common Tags
 # ==============================================================================
 variable "additional_tags" {

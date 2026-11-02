@@ -26,8 +26,10 @@ terraform.tfvars
 *.auto.tfvars
 
 # Wallet archives and certificates
-*wallet*.zip
-*Wallet*.zip
+wallets/
+*wallet*
+*Wallet*
+*.zip
 *.sso
 *.jks
 tnsnames.ora

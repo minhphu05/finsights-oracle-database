@@ -135,3 +135,29 @@ output "account2_mysql_public_ip" {
   description = "Public IP of Network Load Balancer forwarding to MySQL in Account 2 (Singapore) for DBeaver/external clients"
   value       = var.enable_account2 && var.enable_mysql && var.enable_mysql_nlb ? module.account2_mysql_nlb[0].public_ip : null
 }
+
+# ==============================================================================
+# Oracle Monitoring & Alerting Outputs
+# ==============================================================================
+output "account1_alerts_topic_id" {
+  description = "OCID of Account 1 (Tokyo) ONS Alerts Topic"
+  value       = var.enable_monitoring ? module.account1_monitoring[0].topic_id : null
+}
+
+output "account1_management_agent_install_key" {
+  description = "Management Agent Install Key for Account 1 (Tokyo) to install OCI agent on VPS nodes"
+  value       = var.enable_monitoring ? module.account1_monitoring[0].management_agent_install_key : null
+  sensitive   = true
+}
+
+output "account2_alerts_topic_id" {
+  description = "OCID of Account 2 (Singapore) ONS Alerts Topic"
+  value       = var.enable_account2 && var.enable_monitoring ? module.account2_monitoring[0].topic_id : null
+}
+
+output "account2_management_agent_install_key" {
+  description = "Management Agent Install Key for Account 2 (Singapore) to install OCI agent on VPS nodes"
+  value       = var.enable_account2 && var.enable_monitoring ? module.account2_monitoring[0].management_agent_install_key : null
+  sensitive   = true
+}
+
