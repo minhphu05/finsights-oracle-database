@@ -6,9 +6,21 @@
 
 ## 1. Thông Tin Bucket Được Khởi Tạo
 
-- **Bucket Name:** `finsights-data-assets`
-- **Storage Tier:** `Standard` (cho phép đọc ghi tức thời với độ trễ thấp).
-- **Access Type:** `NoPublicAccess` (mặc định chỉ cho phép truy cập có xác thực).
+### A. Account 1 (Tokyo - Primary)
+- **Bucket Name:** `finsights-data-assets-tokyo`
+- **Tenancy Namespace:** `nryqf437jjy5`
+- **Region:** `ap-tokyo-1`
+- **Storage Tier:** `Standard` (Always Free 20 GB)
+- **Access Type:** `NoPublicAccess`
+- **S3 Endpoint:** `https://nryqf437jjy5.compat.objectstorage.ap-tokyo-1.oraclecloud.com`
+
+### B. Account 2 (Singapore - Secondary)
+- **Bucket Name:** `finsights-data-assets-singapore`
+- **Tenancy Namespace:** `axrxyxi3tkjc`
+- **Region:** `ap-singapore-1`
+- **Storage Tier:** `Standard` (Always Free 20 GB)
+- **Access Type:** `NoPublicAccess`
+- **S3 Endpoint:** `https://axrxyxi3tkjc.compat.objectstorage.ap-singapore-1.oraclecloud.com`
 
 ---
 
